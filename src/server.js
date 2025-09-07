@@ -1,9 +1,9 @@
 import express from 'express';
 import { ENV } from './config/env.js';
 import { db } from "./config/db.js";
-import { favoritesTable } from "./db/schema.js";
+import { favoritesTable, categoriesTable, recipesTable } from "./db/schema.js";
 import job from "./config/cron.js";
-import { and, eq } from "drizzle-orm";
+import { and, eq, desc } from "drizzle-orm";
 
 const app = express();
 const PORT = ENV.PORT || 3000;
@@ -16,6 +16,83 @@ app.get("/api/health", (req, res) => {
 });
 
 app.use(express.json());
+
+// 📌 Get all categories
+app.get("/api/categories", async (req, res) => {
+  try {
+    const categories = await db.select().from(categoriesTable);
+    res.status(200).json(categories);
+  } catch (error) {
+    console.error("Error fetching categories", error);
+    res.status(500).json({ error: "Something went wrong" });
+  }
+});
+// 📌 Get all recipes (optionally by category)
+app.get("/api/recipes", async (req, res) => {
+  try {
+    const { categoryId } = req.query;
+
+    let query = db.select().from(recipesTable).orderBy(desc(recipesTable.createdAt));
+
+    if (categoryId) {
+      query = query.where(eq(recipesTable.categoryId, parseInt(categoryId)));
+    }
+
+    const recipes = await query;
+    res.status(200).json(recipes);
+  } catch (error) {
+    console.error("Error fetching recipes", error);
+    res.status(500).json({ error: "Something went wrong" });
+  }
+});
+
+// 📌 Add new recipe
+app.post("/api/recipes", async (req, res) => {
+  try {
+    const { userId, categoryId, title, instructions, imageUrl } = req.body;
+
+    if (!userId || !title) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    const newRecipe = await db
+      .insert(recipesTable)
+      .values({
+        userId,
+        categoryId,
+        title,
+        instructions,
+        imageUrl,
+      })
+      .returning();
+
+    res.status(201).json(newRecipe[0]);
+  } catch (error) {
+    console.error("Error adding recipe", error);
+    res.status(500).json({ error: "Something went wrong" });
+  }
+});
+
+// 📌 Get single recipe by ID
+app.get("/api/recipes/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const recipe = await db
+      .select()
+      .from(recipesTable)
+      .where(eq(recipesTable.id, parseInt(id)));
+
+    if (recipe.length === 0) {
+      return res.status(404).json({ error: "Recipe not found" });
+    }
+
+    res.status(200).json(recipe[0]);
+  } catch (error) {
+    console.error("Error fetching recipe", error);
+    res.status(500).json({ error: "Something went wrong" });
+  }
+});
 
 app.post("/api/favorites", async (req, res) => {
   try {

@@ -8,6 +8,27 @@
       "when": 1757145149552,
       "tag": "0000_medical_taskmaster",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1757224126215,
+      "tag": "0001_motionless_silver_fox",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1757224773925,
+      "tag": "0002_easy_bedlam",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1757225421152,
+      "tag": "0003_ancient_spirit",
+      "breakpoints": true
     }
   ]
 }

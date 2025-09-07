@@ -10,3 +10,23 @@ export const favoritesTable = pgTable("favorites", {
   servings: text("servings"),
   createdAt: timestamp("created_at").defaultNow(),
 });
+
+export const categoriesTable = pgTable("categories", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const recipesTable = pgTable("recipes", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(), 
+  image: text("image"),
+  instructions: text("instructions").notNull(),
+  ingredients: text("ingredients").notNull(),
+  cookTime: text("cook_time"),
+  servings: text("servings"),
+  categoryId: integer("category_id").references(() => categoriesTable.id),
+  userId: text("user_id").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
