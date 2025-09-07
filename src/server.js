@@ -49,7 +49,7 @@ app.get("/api/recipes", async (req, res) => {
 // 📌 Add new recipe
 app.post("/api/recipes", async (req, res) => {
   try {
-    const { userId, categoryId, title, instructions, imageUrl } = req.body;
+    const { userId, categoryId, title, instructions, image, ingredients, cook_time, servings } = req.body;
 
     if (!userId || !title) {
       return res.status(400).json({ error: "Missing required fields" });
@@ -62,7 +62,10 @@ app.post("/api/recipes", async (req, res) => {
         categoryId,
         title,
         instructions,
-        imageUrl,
+        ingredients,
+        cook_time,
+        servings,
+        image
       })
       .returning();
 
