@@ -3,7 +3,7 @@ import { ENV } from './config/env.js';
 import { db } from "./config/db.js";
 import { favoritesTable, categoriesTable, recipesTable } from "./db/schema.js";
 import job from "./config/cron.js";
-import { and, eq, desc } from "drizzle-orm";
+import { and, eq, desc, ilike, or } from "drizzle-orm";
 
 const app = express();
 const PORT = ENV.PORT || 3000;
@@ -90,6 +90,32 @@ app.get("/api/recipes/:id", async (req, res) => {
     res.status(200).json(recipe[0]);
   } catch (error) {
     console.error("Error fetching recipe", error);
+    res.status(500).json({ error: "Something went wrong" });
+  }
+});
+
+// GET /api/recipes/search?query=chicken
+app.get("/api/recipes/search", async (req, res) => {
+  try {
+    const { query } = req.query;
+
+    if (!query || query.trim() === "") {
+      return res.status(400).json({ error: "Query is required" });
+    }
+
+    const results = await db
+      .select()
+      .from(recipesTable)
+      .where(
+        or(
+          ilike(recipesTable.title, `%${query}%`),         // search in title
+          ilike(recipesTable.ingredients, `%${query}%`)   // search in ingredients
+        )
+      );
+
+    res.status(200).json(results);
+  } catch (error) {
+    console.error("Error searching recipes:", error);
     res.status(500).json({ error: "Something went wrong" });
   }
 });
