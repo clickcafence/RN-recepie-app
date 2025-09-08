@@ -63,7 +63,7 @@ app.post("/api/recipes", async (req, res) => {
         title,
         instructions,
         ingredients,
-        cook_time,
+        cook_time: cook_time || cookTime,
         servings,
         image
       })
