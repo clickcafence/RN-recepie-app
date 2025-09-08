@@ -1,0 +1,1 @@
+ALTER TABLE "recipes" ALTER COLUMN "cook_time" DROP NOT NULL;

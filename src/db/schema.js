@@ -25,7 +25,7 @@ export const recipesTable = pgTable("recipes", {
   image: text("image"),
   instructions: text("instructions").notNull(),
   ingredients: text("ingredients").notNull(),
-  cookTime: text("cook_time"),
+  cook_time: integer("cook_time"),
   servings: text("servings"),
   categoryId: integer("category_id").references(() => categoriesTable.id),
   userId: text("user_id").notNull(),

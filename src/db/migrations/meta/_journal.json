@@ -8,6 +8,27 @@
       "when": 1757244853520,
       "tag": "0000_wise_masque",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1757346228834,
+      "tag": "0001_natural_scalphunter",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1757346365623,
+      "tag": "0002_chief_hydra",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1757348946083,
+      "tag": "0003_clammy_retro_girl",
+      "breakpoints": true
     }
   ]
 }

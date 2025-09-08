@@ -138,7 +138,7 @@ app.post("/api/favorites", async (req, res) => {
         recipeId,
         title,
         image,
-        cookTime,
+        cook_time: cook_time || cookTime, 
         servings,
       })
       .returning();
