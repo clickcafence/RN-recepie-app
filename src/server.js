@@ -96,7 +96,22 @@ app.get("/api/recipes/:id", async (req, res) => {
     res.status(500).json({ error: "Something went wrong" });
   }
 });
+// Get recipes for a specific user
+app.get("/api/recipes/user/:userId", async (req, res) => {
+    try {
+    const { userId } = req.params;
 
+    const userRecipes = await db
+      .select()
+      .from(recipesTable)
+      .where(eq(recipesTable.userId, userId));
+
+    res.status(200).json(userRecipes);
+  } catch (error) {
+    console.log("Error fetching the userRecipes", error);
+    res.status(500).json({ error: "Something went wrong" });
+  }
+})
 // GET /api/recipes/search?query=chicken
 app.get("/api/recipes/search", async (req, res) => {
   try {
