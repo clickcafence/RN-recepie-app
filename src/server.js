@@ -125,7 +125,7 @@ app.get("/api/recipes/search", async (req, res) => {
 
 app.post("/api/favorites", async (req, res) => {
   try {
-    const { userId, recipeId, title, image, cookTime, servings } = req.body;
+    const { userId, recipeId, title, image, cook_time, servings } = req.body;
 
     if (!userId || !recipeId || !title) {
       return res.status(400).json({ error: "Missing required fields" });
