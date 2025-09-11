@@ -76,26 +76,7 @@ app.post("/api/recipes", async (req, res) => {
   }
 });
 
-// 📌 Get single recipe by ID
-app.get("/api/recipes/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
 
-    const recipe = await db
-      .select()
-      .from(recipesTable)
-      .where(eq(recipesTable.id, parseInt(id)));
-
-    if (recipe.length === 0) {
-      return res.status(404).json({ error: "Recipe not found" });
-    }
-
-    res.status(200).json(recipe[0]);
-  } catch (error) {
-    console.error("Error fetching recipe", error);
-    res.status(500).json({ error: "Something went wrong" });
-  }
-});
 // Get recipes for a specific user
 app.get("/api/recipes/user/:userId", async (req, res) => {
     try {
@@ -116,6 +97,7 @@ app.get("/api/recipes/user/:userId", async (req, res) => {
 app.get("/api/recipes/search", async (req, res) => {
   try {
     const { query } = req.query;
+    console.log("SEARCH query:", query);
 
     if (!query || query.trim() === "") {
       return res.status(400).json({ error: "Query is required" });
@@ -131,38 +113,35 @@ app.get("/api/recipes/search", async (req, res) => {
         )
       );
 
+    console.log("Search results:", results);
     res.status(200).json(results);
   } catch (error) {
-    console.error("Error searching recipes:", error.message, error.stack); // 👈 more detail
+    console.error("Error searching recipes:", error);
+    res.status(500).json({ error: "Something went wrong" });
+  }
+});
+// 📌 Get single recipe by ID
+app.get("/api/recipes/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const recipe = await db
+      .select()
+      .from(recipesTable)
+      .where(eq(recipesTable.id, parseInt(id)));
+
+    if (recipe.length === 0) {
+      return res.status(404).json({ error: "Recipe not found" });
+    }
+
+    res.status(200).json(recipe[0]);
+  } catch (error) {
+    console.error("Error fetching recipe", error);
     res.status(500).json({ error: "Something went wrong" });
   }
 });
 
-// app.get("/api/recipes/search", async (req, res) => {
-//   try {
-//     const { query } = req.query;
-
-//     if (!query || query.trim() === "") {
-//       return res.status(400).json({ error: "Query is required" });
-//     }
-
-//     const results = await db
-//       .select()
-//       .from(recipesTable)
-//       .where(
-//         or(
-//           ilike(recipesTable.title, `%${query}%`),         // search in title
-//           ilike(recipesTable.ingredients, `%${query}%`)   // search in ingredients
-//         )
-//       );
-
-//     res.status(200).json(results);
-//   } catch (error) {
-//     console.error("Error searching recipes:", error);
-//     res.status(500).json({ error: "Something went wrong" });
-//   }
-// });
-
+//POST add to favorites
 app.post("/api/favorites", async (req, res) => {
   try {
     const { userId, recipeId, title, image, cook_time, servings } = req.body;
@@ -205,7 +184,7 @@ app.get("/api/favorites/:userId", async (req, res) => {
     res.status(500).json({ error: "Something went wrong" });
   }
 });
-
+//DELETE form favorites
 app.delete("/api/favorites/:userId/:recipeId", async (req, res) => {
   try {
     const { userId, recipeId } = req.params;
